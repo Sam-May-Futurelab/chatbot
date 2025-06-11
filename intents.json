@@ -42,6 +42,22 @@
         ]
     },
     {
+    "tag": "user_name_query",
+    "patterns": [
+        "what is my name",
+        "what's my name", 
+        "do you remember my name",
+        "who am i",
+        "what do you call me"
+  ],
+  "responses": [
+        "Your name is {name}! How could I forget?",
+        "You're {name}, of course!",
+        "I remember you - you're {name}!",
+        "Your name is {name}. Nice to meet you again!"
+  ]
+},
+    {
       "tag": "agreement",
       "patterns": [
         "sure",

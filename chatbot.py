@@ -177,18 +177,24 @@ def generate_response(intent, pattern, user_input, intenttoresponse):
     if intent not in intenttoresponse:
         return "I'm sorry, I don't understand that."
     
-    # Extract and store the name if mentioned by user
+    # extracts and stores the name if mentioned by user
     name = extract_name_from_input(user_input)
     if name:
         memory.set_name(name)
     
-    # Gets a random response for variety
-    response = random.choice(intenttoresponse[intent])
-
+    # Special handling for user name queries (if mentioned)
+    if intent == "user_name_query":
+        if memory.get_name() == "friend":
+            return "I don't know your name yet! You can tell me by saying 'My name is...' or just tell me your name!"
+        else:
+            response = random.choice(intenttoresponse[intent])
+            response = response.replace("{name}", memory.get_name())
+            return response
+    
     # generates the sentiment aware response
     response = generate_sentiment_aware_response(intent, intenttoresponse[intent], user_input)
     
-    # Apply template substitutions
+    # Applies the template substitutions
     response = response.replace("{name}", memory.get_name())
     response = response.replace("{user_name}", memory.get_name())
     
