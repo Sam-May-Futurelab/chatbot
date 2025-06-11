@@ -302,7 +302,7 @@ def generate_sentiment_aware_response(intent, responses, user_input):
 def demonstrate_nlp_processing(user_input):
     """demonstrates basic NLP processing on user input."""
     # Better regex to catch various patterns
-    word_match = re.search(r"(?:what does|stem|happens to|stem of|process|analyze|nlp.*does)\s+(\w+)", user_input, re.IGNORECASE)
+    word_match = re.search(r"(?:what does|stem|happens to|stem of|process|analyze|nlp.*does)\s+(?:the\s+word\s+)?(\w+)", user_input, re.IGNORECASE)
 
     if word_match:
         original_word = word_match.group(1)
@@ -313,7 +313,7 @@ def demonstrate_nlp_processing(user_input):
             original_word = becomes_match.group(1)
         else:
             # if no specific word is mentioned, use the last meaningful word
-            words = [w for w in user_input.split() if len(w) > 2]
+            words = [w for w in user_input.split() if len(w) > 2 and w.lower() not in ['what', 'does', 'become', 'the', 'word']]
             original_word = words[-1] if words else "example"
 
     # remove punctuation

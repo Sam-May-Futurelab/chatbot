@@ -229,7 +229,7 @@
       "patterns": [
         "what is your name",
         "who are you",
-        "what should I call you"
+        "what should i call you"
       ],
       "responses": [
         "Steve, my name is Steve.. I think.",
@@ -240,18 +240,18 @@
     {
     "tag": "nlp_demo",
     "patterns": [
-        "what does \\w+ become",
-        "stem \\w+",
-        "what is the stem of \\w+", 
+        "what does .* become",
+        "stem .*",
+        "what is the stem of .*", 
         "show me stemming",
         "demonstrate stemming",
-        "how do you process \\w+",
-        "what happens to \\w+",
-        "can you stem \\w+",
-        "\\w+ becomes what",
-        "process the word \\w+",
-        "analyze \\w+",
-        "for nlp what does \\w+ become"
+        "how do you process .*",
+        "what happens to .*",
+        "can you stem .*",
+        ".* becomes what",
+        "process the word .*",
+        "analyze .*",
+        "for nlp what does .* become"
     ],
     "responses": [
         "Let me show you how I process that word!",
