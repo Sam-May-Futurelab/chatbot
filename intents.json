@@ -238,6 +238,44 @@
       ]
     },
     {
+    "tag": "nlp_demo",
+    "patterns": [
+        "what does \\w+ become",
+        "stem \\w+",
+        "what is the stem of \\w+", 
+        "show me stemming",
+        "demonstrate stemming",
+        "how do you process \\w+",
+        "what happens to \\w+",
+        "can you stem \\w+",
+        "\\w+ becomes what",
+        "process the word \\w+",
+        "analyze \\w+",
+        "for nlp what does \\w+ become"
+    ],
+    "responses": [
+        "Let me show you how I process that word!",
+        "Great question! Here's how I analyze words:",
+        "I love demonstrating my word processing skills!",
+        "Watch this - here's how stemming works:"
+    ]
+    },
+    {
+    "tag": "nlp_education",
+    "patterns": [
+        "explain stemming",
+        "what is lemmatization", 
+        "difference between stemming and lemmatization",
+        "can you explain what they discussed",
+        "explain what they discussed"
+    ],
+    "responses": [
+        "Stemmers just cut off word endings, while lemmatizers consider the context.",
+        "Stemming is fast but rough - it just chops endings. Lemmatization is slower but more accurate.",
+        "If speed is important, use stemming. If accuracy matters, use lemmatization."
+    ]
+    },
+    {
       "tag": "age_query", 
       "patterns": [
         "how old are you",

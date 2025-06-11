@@ -6,6 +6,7 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
+from nltk.stem import WordNetLemmatizer
 import string
 
 # download the nltk resources if not already downloaded
@@ -33,6 +34,11 @@ try:
     nltk.data.find('taggers/averaged_perceptron_tagger_eng')
 except LookupError:
     nltk.download('averaged_perceptron_tagger_eng')
+
+try:
+    nltk.data.find('corpora/wordnet')
+except LookupError:
+    nltk.download('wordnet')
 
 
 def preprocess_text(text):
@@ -85,7 +91,7 @@ def extract_name_from_input(user_input):
     extracts the name from the user input if it exists
     """
     # Check if it's just a single word (likely a name) - but not common words
-    common_words = ['hello', 'hi', 'hey', 'good', 'bad', 'sad', 'happy', 'great', 'awesome', 'beans', 'food', 'drink', 'what', 'how', 'when', 'where', 'why']
+    common_words = ['hello', 'hi', 'hey', 'good', 'bad', 'sad', 'happy', 'great', 'awesome', 'beans', 'food', 'drink', 'what', 'how', 'when', 'where', 'cool', 'why']
     
     if re.match(r"^[A-Za-z]+!?$", user_input.strip()):
         name_candidate = user_input.strip().rstrip('!').lower()
@@ -190,6 +196,16 @@ def generate_response(intent, pattern, user_input, intenttoresponse):
             response = random.choice(intenttoresponse[intent])
             response = response.replace("{name}", memory.get_name())
             return response
+    #special handdling for nlp processing
+    if intent == "nlp_demo":
+        intro = random.choice(intenttoresponse[intent])
+        demo = demonstrate_nlp_processing(user_input)
+        return f"{intro}\n{demo}"
+    
+    # special handling for lemmatisation and nlp
+    if intent == "nlp_education":
+        response = random.choice(intenttoresponse[intent])
+        return response
     
     # generates the sentiment aware response
     response = generate_sentiment_aware_response(intent, intenttoresponse[intent], user_input)
@@ -282,6 +298,89 @@ def generate_sentiment_aware_response(intent, responses, user_input):
 
     return response
 
+#NLP processing 
+def demonstrate_nlp_processing(user_input):
+    """demonstrates basic NLP processing on user input."""
+    # Better regex to catch various patterns
+    word_match = re.search(r"(?:what does|stem|happens to|stem of|process|analyze|nlp.*does)\s+(\w+)", user_input, re.IGNORECASE)
+
+    if word_match:
+        original_word = word_match.group(1)
+    else:
+        # Look for "word becomes" pattern
+        becomes_match = re.search(r"(\w+)\s+becomes?", user_input, re.IGNORECASE)
+        if becomes_match:
+            original_word = becomes_match.group(1)
+        else:
+            # if no specific word is mentioned, use the last meaningful word
+            words = [w for w in user_input.split() if len(w) > 2]
+            original_word = words[-1] if words else "example"
+
+    # remove punctuation
+    original_word = original_word.strip(string.punctuation)
+
+    #demonstrate processing steps
+    stemmer = PorterStemmer()
+
+    #step 1: Original word
+    result = f"Analyzing '{original_word}':\n"
+    result += f"Original word: {original_word}\n"
+
+    #step 2: Lowercase
+    lower_word = original_word.lower()
+    result += f"Lowercase: {lower_word}\n"
+
+    #step 3: tokenise
+    tokens = word_tokenize(lower_word)
+    result += f"Tokenised: {tokens}\n"
+
+    #step 4: check for stopwords
+    stop_words = set(stopwords.words("english"))
+    is_stopword = lower_word in stop_words
+    result += f"Is stopword: {is_stopword}\n"
+
+    #step 5: stemming
+    stemmed = stemmer.stem(lower_word)
+    result += f"Stemmed: {stemmed}\n"
+
+    #final result
+    if stemmed != lower_word:
+        result += f"Result: '{original_word}' becomes '{stemmed}'"
+    else:
+        result += f"Result: '{original_word}' stays unchanged"
+    return result
+
+def demonstrate_lemmatisation(user_input):
+    """demonstrates basic lemmatisation on user input."""
+    # Extract word from user input first
+    word_match = re.search(r"(?:lemmatize|lemma|lem)\s+(\w+)", user_input, re.IGNORECASE)
+    
+    if word_match:
+        word = word_match.group(1)
+    else:
+        words = [w for w in user_input.split() if len(w) > 2]
+        word = words[-1] if words else "example"
+    
+    # Remove punctuation
+    word = word.strip(string.punctuation)
+    
+    lemmatiser = WordNetLemmatizer()
+    stemmer = PorterStemmer()
+
+    stemmed = stemmer.stem(word.lower())
+    lemmatised = lemmatiser.lemmatize(word.lower())
+
+    result = f"Comparing '{word}':\n"
+    result += f"Stemmed: {stemmed}\n"
+    result += f"Lemmatised: {lemmatised}\n"
+
+    if stemmed != lemmatised:
+        result += f"Notice the difference?"
+    else:
+        result += f"In this case, stemming and lemmatisation yield the same result! Cool right?"
+
+    return result
+
 # dynamic pattern for food and drink
 def get_dynamic_response(user_input):
     """Enhanced dynamic response for food and drinks."""
@@ -312,7 +411,7 @@ def get_dynamic_response(user_input):
 
 # Main chatbot loop
 def chatbot():
-    print("Beep Boop - Welcome to Sam's ChatBot - Your Personal Assistant!")
+    print("Beep Boop - Welcome to Sam's ChatBot")
     print("I can help you with conversations, answer questions, and provide friendly chat.")
     print("I can discuss food, share jokes, remember your name, and much more!")
     print("(Tell me your name anytime, or type 'exit' to close)")
