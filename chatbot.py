@@ -14,7 +14,7 @@ except LookupError:
     nltk.download('punkt')
 
 try:
-    nltk.data.find('tokenizers/punkt_tab')  # ADD THIS BLOCK
+    nltk.data.find('tokenizers/punkt_tab')
 except LookupError:
     nltk.download('punkt_tab')
 
@@ -46,6 +46,48 @@ def preprocess_text(text):
 #return the processed words
     return ' '.join(tokens)
 
+class ChatbotMemory:
+    """
+    stores the users information for personalised responses
+    """
+    def __init__(self):
+        self.user_name = None
+        self.user_preferences = {}
+
+    def set_name(self, name):
+        self.user_name = name
+
+    def get_name(self):
+        return self.user_name if self.user_name else "friend"
+
+    def set_preference(self, key, value):
+        self.user_preferences[key] = value
+
+    def get_preference(self, key):
+        return self.user_preferences.get(key, None)
+    
+# initialise the memory
+memory = ChatbotMemory()
+
+def extract_name_from_input(user_input):
+    """
+    extracts the name from the user input if it exists
+    """
+    name_patterns = [
+        r"my name is\s+(\w+)",
+        r"i'm +(\w+)",
+        r"call me\s+(\w+)",
+        r"i am\s+(\w+)",
+        r"you can call me\s+(\w+)",
+        r"i go by\s+(\w+)",
+        r"name's\s+(\w+)",
+    ]
+
+    for pattern in name_patterns:
+        match = re.search(pattern, user_input, re.IGNORECASE)
+        if match:
+            return match.group(1).capitalize()
+    return None
 
 def enhanced_find_intent(user_input, patterntointent):
     """
@@ -108,10 +150,23 @@ def find_intent(user_input, patterntointent):
     return None, None
 
 def generate_response(intent, pattern, user_input, intenttoresponse):
-    """Generates a response based on the intent and user input."""
+    """Generates a personalised response with memory."""
     if intent not in intenttoresponse:
         return "I'm sorry, I don't understand that."
-    return random.choice(intenttoresponse[intent])
+    
+    # Extract and store name if mentioned
+    name = extract_name_from_input(user_input)
+    if name:
+        memory.set_name(name)
+    
+    # Get random response
+    response = random.choice(intenttoresponse[intent])
+    
+    # Apply template substitutions
+    response = response.replace("{name}", memory.get_name())
+    response = response.replace("{user_name}", memory.get_name())
+    
+    return response
 
 def generate_fallback_response(user_input):
     """Generates a fallback response when no intent is matched."""
@@ -153,7 +208,8 @@ def get_dynamic_response(user_input):
 
 # Main chatbot loop
 def chatbot():
-    print("Welcome! (Type 'exit' to close the chat)")
+    print("Welcome! I'm your friendly chatbot. (Type 'exit' to close the chat)")
+    print("What's your name?")
 
     intents = load_intents()
     if not intents:
@@ -165,20 +221,25 @@ def chatbot():
     while True:
         user_input = input("You: ")
             
-        # end chat if user says exit
         if user_input.lower() == "exit":
-            print("Chatbot: Thank you for your interaction")
+            print(f"Chatbot: Goodbye {memory.get_name()}! Thank you for chatting!")
             break
             
-        # Use JSON patterns
         intent, matched_pattern = enhanced_find_intent(user_input, patterntointent)
             
         if intent:
-            response = generate_response(intent, matched_pattern, user_input, intenttoresponse)
-            print("Chatbot:", response)
-             # if nothing matches
+            if intent == "food_drink":
+                dynamic_response = get_dynamic_response(user_input)
+                if dynamic_response:
+                    print("Chatbot:", dynamic_response)
+                else:
+                    response = generate_response(intent, matched_pattern, user_input, intenttoresponse)
+                    print("Chatbot:", response)
+            else:
+                response = generate_response(intent, matched_pattern, user_input, intenttoresponse)
+                print("Chatbot:", response)
         else:
-            response = generate_fallback_response(user_input)  # ✅ Use your smart function
+            response = generate_fallback_response(user_input)
             print("Chatbot:", response)
 
 # Run the chatbot!

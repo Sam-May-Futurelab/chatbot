@@ -15,8 +15,9 @@
       ],
       "responses": [
         "How are you doing today?",
-        "Hello there! How can I help you?",
-        "Hi! Great to see you!"
+        "Hello there {name}! How can I help you?",
+        "Hi! Great to see you!",
+        "Hey {name}! What's up?"
       ]
     },
     {
@@ -35,7 +36,7 @@
         ],
         "responses": [
             "That's great to hear! How can I help you today?",
-            "Nice! I am Glad you're feeling good!",
+            "Nice! I am Glad you're feeling good {name}!",
             "Awesome! Let's keep the good vibes going!",
             "I'm doing well too, thanks for asking!"
         ]
@@ -56,7 +57,7 @@
       "responses": [
         "Great! What would you like to know?",
         "Awesome! How can I assist you?",
-        "Perfect! What's on your mind?",
+        "Perfect {name}! What's on your mind?",
         "Cool! What can I help you with?"
       ]
     },
@@ -103,7 +104,7 @@
         "tell me a joke"
       ],
       "responses": [
-        "Glad I could make you laugh! 😄",
+        "Glad I could make you laugh!",
         "Haha, I try my best to be entertaining!",
         "Why don't scientists trust atoms? Because they make up everything!",
         "I'm funnier than I thought! What else can I help you with?"
@@ -154,7 +155,7 @@
         "talk soon"
       ],
       "responses": [
-        "Goodbye! Have a great day!",
+        "Goodbye {name}! Have a great day!",
         "See you later!",
         "Take care!",
         "It was nice chatting with you!"
@@ -170,10 +171,35 @@
         "much appreciated"
       ],
       "responses": [
-        "You're welcome!",
+        "You're welcome {name}!",
         "Happy to help!",
         "No problem at all!",
         "Anytime! Glad I could help!"
+      ]
+    },
+    {
+      "tag": "name_introduction",
+      "patterns": [
+        "my name is \\w+",
+        "i'm \\w+", 
+        "i am \\w+",
+        "call me \\w+"
+      ],
+      "responses": [
+        "Nice to meet you, {name}!",
+        "Great to meet you {name}! What would you like to chat about?",
+        "Hello {name}! Thanks for introducing yourself!"
+      ]
+    },
+    {
+      "tag": "simple_name",
+      "patterns": [
+        "^\\w+!?$"
+      ],
+      "responses": [
+        "Nice to meet you, {name}! How can I help you today?",
+        "Hello {name}! What would you like to chat about?",
+        "Hi there {name}!"
       ]
     },
     {
