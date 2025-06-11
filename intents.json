@@ -11,7 +11,6 @@
         "good day",
         "greetings",
         "hiya", 
-        "greetings",
         "how are you"
       ],
       "responses": [
@@ -30,13 +29,119 @@
             "not bad",
             "splendid",
             "feeling good",
-            "feeling great"
+            "feeling great",
+            "good you",
+            "good, you"
         ],
         "responses": [
             "That's great to hear! How can I help you today?",
             "Nice! I am Glad you're feeling good!",
-            "Awesome! Let's keep the good vibes going!"
+            "Awesome! Let's keep the good vibes going!",
+            "I'm doing well too, thanks for asking!"
         ]
+    },
+    {
+      "tag": "agreement",
+      "patterns": [
+        "sure",
+        "yes",
+        "yeah",
+        "yep",
+        "okay",
+        "ok",
+        "alright",
+        "absolutely",
+        "definitely"
+      ],
+      "responses": [
+        "Great! What would you like to know?",
+        "Awesome! How can I assist you?",
+        "Perfect! What's on your mind?",
+        "Cool! What can I help you with?"
+      ]
+    },
+    {
+      "tag": "disagreement",
+      "patterns": [
+        "nope",
+        "no",
+        "nah",
+        "not really",
+        "never mind",
+        "forget it"
+      ],
+      "responses": [
+        "No worries! Is there anything else I can help with?",
+        "That's okay! What else would you like to talk about?",
+        "Fair enough! Anything else on your mind?"
+      ]
+    },
+    {
+      "tag": "confusion",
+      "patterns": [
+        "what",
+        "huh",
+        "what do you mean",
+        "i don't understand",
+        "confused",
+        "what are you talking about"
+      ],
+      "responses": [
+        "Sorry for the confusion! I'm here to chat and help. What would you like to know?",
+        "Let me clarify! I'm a chatbot. You can ask me about anything!",
+        "I can help you with questions or just have a chat. What interests you?"
+      ]
+    },
+    {
+      "tag": "humor",
+      "patterns": [
+        "lol",
+        "haha",
+        "funny",
+        "hilarious",
+        "joke",
+        "tell me a joke"
+      ],
+      "responses": [
+        "Glad I could make you laugh! 😄",
+        "Haha, I try my best to be entertaining!",
+        "Why don't scientists trust atoms? Because they make up everything!",
+        "I'm funnier than I thought! What else can I help you with?"
+      ]
+    },
+    {
+      "tag": "capabilities",
+      "patterns": [
+        "what can you do",
+        "help",
+        "what are your features",
+        "how do you work",
+        "what do you know"
+      ],
+      "responses": [
+        "I can chat with you, answer questions, and help with various topics!",
+        "I'm here to have conversations and assist you. What would you like to explore?",
+        "I can discuss different topics, tell jokes, and just be a friendly chatbot!"
+      ]
+    },
+    {
+      "tag": "food_drink",
+      "patterns": [
+        "(?:have|drink|want|like)\\s+(?:to\\s+)?(?:a\\s+|some\\s+)?(?P<drink>\\w+)",
+        "I want (?P<item>\\w+)",
+        "can I have (?P<item>\\w+)",
+        "drink",
+        "food",
+        "hungry",
+        "thirsty"
+      ],
+      "responses": [
+        "You can have {food_item} and {drink_item} with me!",
+        "Sure! {drink_item} sounds great with some {food_item}!",
+        "Perfect choice! {drink_item} and {food_item} coming right up!",
+        "I'd love some virtual snacks too! What's your favorite food?",
+        "Sounds tasty! I wish I could eat, but I'll enjoy it vicariously!"
+      ]
     },
     {
       "tag": "goodbye", 
@@ -44,12 +149,15 @@
         "bye",
         "goodbye", 
         "see you",
-        "farewell"
+        "farewell",
+        "catch you later",
+        "talk soon"
       ],
       "responses": [
         "Goodbye! Have a great day!",
         "See you later!",
-        "Take care!"
+        "Take care!",
+        "It was nice chatting with you!"
       ]
     },
     {
@@ -57,12 +165,15 @@
       "patterns": [
         "thank you",
         "thanks",
-        "appreciate it"
+        "appreciate it",
+        "cheers",
+        "much appreciated"
       ],
       "responses": [
         "You're welcome!",
         "Happy to help!",
-        "No problem at all!"
+        "No problem at all!",
+        "Anytime! Glad I could help!"
       ]
     },
     {
@@ -87,20 +198,8 @@
       ],
       "responses": [
         "I'm as old as time itself!!",
-        "I was born when this code was written by Sam!!"
-      ]
-    },
-    {
-      "tag": "food_drink",
-      "patterns": [
-        "(?:have|drink|want|like)\\s+(?:to\\s+)?(?:a\\s+|some\\s+)?(?P<drink>\\w+)",
-        "I want (?P<item>\\w+)",
-        "can I have (?P<item>\\w+)"
-      ],
-      "responses": [
-        "You can have {food_item} and {drink_item} with me!",
-        "Sure! {drink_item} sounds great with some {food_item}!",
-        "Perfect choice! {drink_item} and {food_item} coming right up!"
+        "I was born when this code was written by Sam!!",
+        "Age is just a number for a chatbot like me!"
       ]
     }
   ]
