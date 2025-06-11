@@ -89,7 +89,7 @@
       ],
       "responses": [
         "Sorry for the confusion! I'm here to chat and help. What would you like to know?",
-        "Let me clarify! I'm a chatbot. You can ask me about anything!",
+        "Let me clarify! I'm a chatbot beep boop. You can ask me about anything!",
         "I can help you with questions or just have a chat. What interests you?"
       ]
     },
@@ -125,25 +125,31 @@
         "I can discuss different topics, tell jokes, and just be a friendly chatbot!"
       ]
     },
-    {
-      "tag": "food_drink",
-      "patterns": [
-        "(?:have|drink|want|like)\\s+(?:to\\s+)?(?:a\\s+|some\\s+)?(?P<drink>\\w+)",
-        "I want (?P<item>\\w+)",
-        "can I have (?P<item>\\w+)",
-        "drink",
-        "food",
-        "hungry",
-        "thirsty"
-      ],
-      "responses": [
-        "You can have {food_item} and {drink_item} with me!",
-        "Sure! {drink_item} sounds great with some {food_item}!",
-        "Perfect choice! {drink_item} and {food_item} coming right up!",
-        "I'd love some virtual snacks too! What's your favorite food?",
-        "Sounds tasty! I wish I could eat, but I'll enjoy it vicariously!"
-      ]
-    },
+{
+  "tag": "food_drink",
+  "patterns": [
+    "(?:have|drink|want|like)\\s+(?:to\\s+)?(?:a\\s+|some\\s+)?(?P<drink>\\w+)",
+    "I want (?P<item>\\w+)",
+    "can I have (?P<item>\\w+)",
+    "what.*food",
+    "what.*drink", 
+    "what.*eat",
+    "what.*drink",
+    "what can i eat",
+    "what can i drink",
+    "drink",
+    "food",
+    "hungry",
+    "thirsty"
+  ],
+  "responses": [
+    "You can have pizza and juice with me!",
+    "How about some pasta and water?",
+    "I'd suggest cookies and milk!",
+    "What about sandwiches and soda?",
+    "Virtual snacks are the best! I wish I could eat!"
+  ]
+},
     {
       "tag": "goodbye", 
       "patterns": [

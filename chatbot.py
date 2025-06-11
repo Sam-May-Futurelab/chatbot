@@ -5,6 +5,7 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
+from nltk import pos_tag
 import string
 
 # download the nltk resources if not already downloaded
@@ -22,6 +23,16 @@ try:
     nltk.data.find('corpora/stopwords')
 except LookupError:
     nltk.download('stopwords')
+
+try:
+    nltk.data.find('averaged_perceptron_tagger')
+except LookupError:
+    nltk.download('averaged_perceptron_tagger')
+
+try:
+    nltk.data.find('taggers/averaged_perceptron_tagger_eng')
+except LookupError:
+    nltk.download('averaged_perceptron_tagger_eng')
 
 
 def preprocess_text(text):
@@ -73,9 +84,18 @@ def extract_name_from_input(user_input):
     """
     extracts the name from the user input if it exists
     """
+    # Check if it's just a single word (likely a name) - but not common words
+    common_words = ['hello', 'hi', 'hey', 'good', 'bad', 'sad', 'happy', 'great', 'awesome', 'beans', 'food', 'drink', 'what', 'how', 'when', 'where', 'why']
+    
+    if re.match(r"^[A-Za-z]+!?$", user_input.strip()):
+        name_candidate = user_input.strip().rstrip('!').lower()
+        if name_candidate not in common_words:
+            return name_candidate.capitalize()
+    
+    # Check for explicit name patterns
     name_patterns = [
         r"my name is\s+(\w+)",
-        r"i'm +(\w+)",
+        r"i'm\s+(\w+)",
         r"call me\s+(\w+)",
         r"i am\s+(\w+)",
         r"you can call me\s+(\w+)",
@@ -86,7 +106,10 @@ def extract_name_from_input(user_input):
     for pattern in name_patterns:
         match = re.search(pattern, user_input, re.IGNORECASE)
         if match:
-            return match.group(1).capitalize()
+            name_candidate = match.group(1).lower()
+            # make sure not to extract common emotion words as names
+            if name_candidate not in common_words:
+                return match.group(1).capitalize()
     return None
 
 def enhanced_find_intent(user_input, patterntointent):
@@ -150,17 +173,20 @@ def find_intent(user_input, patterntointent):
     return None, None
 
 def generate_response(intent, pattern, user_input, intenttoresponse):
-    """Generates a personalised response with memory."""
+    """Generates a personalised response with sentiment and memory."""
     if intent not in intenttoresponse:
         return "I'm sorry, I don't understand that."
     
-    # Extract and store name if mentioned
+    # Extract and store the name if mentioned by user
     name = extract_name_from_input(user_input)
     if name:
         memory.set_name(name)
     
-    # Get random response
+    # Gets a random response for variety
     response = random.choice(intenttoresponse[intent])
+
+    # generates the sentiment aware response
+    response = generate_sentiment_aware_response(intent, intenttoresponse[intent], user_input)
     
     # Apply template substitutions
     response = response.replace("{name}", memory.get_name())
@@ -191,25 +217,100 @@ def generate_fallback_response(user_input):
             f"I'm not familiar with '{user_input}'. How about we talk about something else?"
         ]
         return random.choice(fallback_responses)
+    
+def analyse_pos_and_respond(user_input):
+    """analyses part of speech and generates a response based on it."""
+    tokens = word_tokenize(user_input)
+    pos_tags = pos_tag(tokens)
+#extract key POS types
+    nouns = [word for word, pos in pos_tags if pos.startswith('NN')]
+    verbs = [word for word, pos in pos_tags if pos.startswith('VB')]
+    adjectives = [word for word, pos in pos_tags if pos.startswith('JJ')]
 
+#generate POS-based responses
+    if nouns:
+        food_nouns = [noun for noun in nouns if noun.lower() in ['pizza', 'chips', 'soup', 'pasta', 'beans', 'fries', 'burger', 'sandwich', 'salad', 'cookies']]
+        if food_nouns:
+            return f"I noticed you mentioned {', '.join(food_nouns)}. Those are tasty! Do you like them?"
+    
+    if verbs:
+        cooking_verbs = [verb for verb in verbs if verb.lower() in ['cook', 'eat', 'drink', 'make', 'prepare']]
+        if cooking_verbs:
+            return f"I see you mentioned {', '.join(cooking_verbs)}. Sounds great! Do you need a recipe?"
+
+    if adjectives:
+        food_adjectives = [adj for adj in adjectives if adj.lower() in ['delicious', 'tasty', 'spicy', 'sweet', 'sour', 'savory']]
+        if food_adjectives:
+            return f"I see you mentioned {', '.join(food_adjectives)}. Those flavors sound amazing! What's your favorite?"
+    
+    return None
+
+def analyze_sentiment(user_input):
+    """basic sentiment analysis to determine positive or negative sentiment."""
+    positive_words = ['good', 'great', 'happy', 'love', 'excellent', 'fantastic']
+    negative_words = ['bad', 'sad', 'hate', 'terrible', 'awful']
+
+    words = user_input.lower().split()
+
+    positive_count = sum(1 for word in words if word in positive_words)
+    negative_count = sum(1 for word in words if word in negative_words)
+
+    if positive_count > negative_count:
+        return "positive"
+    elif negative_count > positive_count:
+        return "negative"
+    else:
+        return "neutral"
+    
+
+def generate_sentiment_aware_response(intent, responses, user_input):
+    """generate responsesd with sentiment awareness."""
+    sentiment = analyze_sentiment(user_input)
+    response = random.choice(responses)
+
+#add the sentiment appropriate responses
+    if sentiment == "positive":
+        response += " I'm glad to hear that!"
+    elif sentiment == "negative":
+        response += " I'm sorry to hear that. How can I help?"
+
+    return response
 
 # dynamic pattern for food and drink
 def get_dynamic_response(user_input):
+    """Enhanced dynamic response for food and drinks."""
+# tries to extract specific food/drink items
     drink_pattern = r"(?:have|drink|want|like)\s+(?:to\s+)?(?:a\s+|some\s+)?(?P<drink>\w+)"
     match = re.search(drink_pattern, user_input, re.IGNORECASE)
 
+    foods = ["pizza", "pasta", "cookies", "sandwich", "burger", "salad"]
+    drinks = ["water", "juice", "soda", "coffee", "tea", "milk"]
+
     if match:
-        drink_item = match.group("drink")
-        food_item = "chips"
-        template = "You can have a {food_item} and a {drink_item} with me!"
-        return template.format(food_item=food_item, drink_item=drink_item)
+        item = match.group("drink")
+        if "food" in user_input.lower():
+            food_item = random.choice(foods)
+            drink_item = random.choice(drinks)
+            return f"You can have {food_item} and {drink_item} with me!"
+        elif "drink" in user_input.lower():
+            drink_item = random.choice(drinks)
+            food_item = random.choice(foods)
+            return f"You can have {drink_item} and some {food_item} with me!"
+        else:
+            # default response
+            food_item = random.choice(foods)
+            drink_item = random.choice(drinks)
+            return f"You can have {food_item} and {drink_item} with me!"
 
     return None
 
 # Main chatbot loop
 def chatbot():
-    print("Welcome! I'm your friendly chatbot. (Type 'exit' to close the chat)")
-    print("What's your name?")
+    print("Beep Boop - Welcome to Sam's ChatBot - Your Personal Assistant!")
+    print("I can help you with conversations, answer questions, and provide friendly chat.")
+    print("I can discuss food, share jokes, remember your name, and much more!")
+    print("(Tell me your name anytime, or type 'exit' to close)")
+    print()
 
     intents = load_intents()
     if not intents:
@@ -222,8 +323,14 @@ def chatbot():
         user_input = input("You: ")
             
         if user_input.lower() == "exit":
-            print(f"Chatbot: Goodbye {memory.get_name()}! Thank you for chatting!")
+            print(f"Chatbot: Goodbye {memory.get_name()}! Thanks for chatting with your personal assistant!")
             break
+        
+        # tries POS analysis first
+        pos_response = analyse_pos_and_respond(user_input)
+        if pos_response:
+            print("Chatbot:", pos_response)
+            continue
             
         intent, matched_pattern = enhanced_find_intent(user_input, patterntointent)
             
